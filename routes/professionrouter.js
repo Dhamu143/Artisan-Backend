@@ -9,6 +9,8 @@ router.get("/category/:categoryId", controller.getSubcategoriesByCategoryId);
 router.get("/active/:lang", controller.getProfessionsActive);
 
 router.get("/admin", controller.getProfessionsAdmin);
+// ARTISANS FILTER (NEW)
+router.get("/artisans", controller.getArtisans); // <-- ADD HERE, BEFORE "/:id"
 
 router.post("/", controller.createProfession);
 

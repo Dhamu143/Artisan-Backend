@@ -1,4 +1,18 @@
 const data = require("../data.json");
+const User = require("../models/userModel");
+const haversine = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Earth radius in km
+  const toRad = (x) => (x * Math.PI) / 180;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
 
 function findProfessionById(id) {
   for (const category of data.Categories) {
@@ -41,7 +55,7 @@ function generateId() {
       }
     });
   });
-   return `P${count.toString().padStart(3, "0")}`;
+  return `P${count.toString().padStart(3, "0")}`;
 }
 
 function getFlattenedProfessions(searchTerm = "") {
@@ -83,7 +97,7 @@ function getFlattenedProfessions(searchTerm = "") {
 
 exports.getCategoriesList = (req, res) => {
   const lang = req.query.lang ? req.query.lang.toLowerCase() : "en";
-  const searchTerm = req.query.search ? req.query.search.toLowerCase() : ""; 
+  const searchTerm = req.query.search ? req.query.search.toLowerCase() : "";
 
   const translations = data.Translations[lang] || data.Translations.en;
 
@@ -158,7 +172,7 @@ exports.getSubcategoriesByCategoryId = (req, res) => {
       (sub) => sub.isActive !== false
     ).map((sub) => ({
       Subcategory_Name: sub.Subcategory_Name,
-      Professions: processProfessions(sub.Professions), 
+      Professions: processProfessions(sub.Professions),
     }));
 
     resultData.Subcategories = processedSubcategories.filter(
@@ -232,7 +246,7 @@ exports.getProfessionById = (req, res) => {
 };
 exports.getProfessionsAdmin = (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 20; 
+  const limit = parseInt(req.query.limit) || 20;
   const searchTerm = req.query.search || "";
 
   const filteredList = getFlattenedProfessions(searchTerm);
@@ -487,4 +501,52 @@ exports.deleteProfession = (req, res) => {
   res.status(200).json({
     message: `Profession ${professionId} and all its translations deleted successfully.`,
   });
+};
+exports.getArtisans = async (req, res) => {
+  try {
+    const {
+      categoryId,
+      subCategoryId,
+      latitude,
+      longitude,
+      distance = 30,
+    } = req.query;
+
+    if (!categoryId || !subCategoryId) {
+      return res.status(400).json({
+        success: false,
+        message: "categoryId and subCategoryId are required.",
+      });
+    }
+
+    let query = {
+      findArtisan: true,
+      categoryId,
+      subCategoryId,
+    };
+
+    let artisans = await User.find(query);
+
+    if (latitude && longitude) {
+      const lat = Number(latitude);
+      const lon = Number(longitude);
+      const maxDistanceKm = Number(distance);
+
+      artisans = artisans.filter((item) => {
+        if (!item.latitude || !item.longitude) return false;
+
+        const dist = haversine(lat, lon, item.latitude, item.longitude);
+        return dist <= maxDistanceKm;
+      });
+    }
+
+    res.json({
+      success: true,
+      total: artisans.length,
+      artisans,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };

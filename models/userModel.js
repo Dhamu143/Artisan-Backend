@@ -37,7 +37,9 @@ const userSchema = new mongoose.Schema(
     // user type
     findArtisan: { type: Boolean },
     categoryId: { type: String },
-    subCategoryId: { type: String },
+    subcategoryId: { type: String },
+    latitude: { type: Number },
+    longitude: { type: Number },
   },
   {
     timestamps: true,
