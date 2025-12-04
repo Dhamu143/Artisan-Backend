@@ -3,22 +3,26 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getAllJobs,
+  getJobs,
   getJobById,
   createJob,
   updateJob,
   deleteJob,
+  createBulkJobs,
 } = require("../controllers/jobController");
 
 // Use router.route() to group methods for the same path (/)
-router.route("/")
-    .get(getAllJobs)    // Handles GET /api/jobs
-    .post(createJob);   // Handles POST /api/jobs
+router
+  .route("/")
+  .get(getJobs) 
+  .post(createJob); 
 
 // Use router.route() to group methods for the same path (/:id)
-router.route("/:id")
-    .get(getJobById)    // Handles GET /api/jobs/:id
-    .put(updateJob)     // Handles PUT /api/jobs/:id
-    .delete(deleteJob); // Handles DELETE /api/jobs/:id
+router
+  .route("/:id")
+  .get(getJobById)
+  .put(updateJob) 
+   .delete(deleteJob); 
+router.post("/bulk", createBulkJobs);
 
 module.exports = router;

@@ -1,12 +1,7 @@
-// utils/smsService.js
-
-const sendSMSToMobile = async (mobileNumber, otpCode) => {
-    console.log(`[SMS Service] Simulating sending OTP ${otpCode} to ${mobileNumber}...`);
-
-    await new Promise(resolve => setTimeout(resolve, 500)); 
-    return true; 
+// Mock SMS Service
+const sendSMSToMobile = async (mobile, otp) => {
+  console.log(`SMS sent to ${mobile}: Your OTP is ${otp}`);
+  return true;
 };
 
-module.exports = {
-    sendSMSToMobile
-};
+module.exports = { sendSMSToMobile };

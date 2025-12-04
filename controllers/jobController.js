@@ -13,13 +13,27 @@ exports.getJobById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-// GET ALL JOBS
-exports.getAllJobs = async (req, res) => {
+
+exports.getJobs = async (req, res) => {
   try {
-    const jobs = await Job.find().sort({ createdAt: -1 });
-    res.status(200).json(jobs);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    const [jobs, total] = await Promise.all([
+      Job.find().skip(skip).limit(limit).sort({ createdAt: -1 }),
+      Job.countDocuments(),
+    ]);
+
+    res.json({
+      jobs,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch jobs" });
   }
 };
 
@@ -28,6 +42,15 @@ exports.createJob = async (req, res) => {
   try {
     const newJob = new Job(req.body);
     const saved = await newJob.save();
+    res.status(201).json(saved);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+exports.createBulkJobs = async (req, res) => {
+  try {
+    const jobs = req.body; // should be an array
+    const saved = await Job.insertMany(jobs);
     res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: err.message });

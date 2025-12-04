@@ -1,21 +1,31 @@
-// routes/userRoutes.js
-
 const express = require("express");
-const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
+
 const {
-  registerUser,
-  addUserData,
-  getUserData,
-  deleteUser,
+  updateUserById,
+  getUserById,
+  getMyProfile, // New
+  deleteUserById,
   getAllUsers,
 } = require("../controllers/userController");
+const router = express.Router();
 
-router.post("/add-data", addUserData);
+// ===========================
+//   USER PROFILE ROUTES
+// ===========================
+// Get all users - Requires authentication (recommend restricting this to Admin only)
+router.get("/all-users", getAllUsers);
 
-router.get("/get-data/:mobile_number", getUserData);
+// Update logged-in user data - Requires authentication and ID match
+router.put("/:userId", authMiddleware, updateUserById);
 
-router.delete("/delete-user/:mobile_number", deleteUser);
-// NEW: list ALL users
-router.get("/all", getAllUsers);
+// Get logged-in user's profile (using token) - Requires authentication
+router.get("/:userId", authMiddleware, getMyProfile);
+
+// Get user by userId - Requires authentication (consider restricting this further if needed)
+router.get("/:userId", authMiddleware, getUserById);
+
+// Delete user by userId - Requires authentication and ID match
+router.delete("/:userId", deleteUserById);
 
 module.exports = router;

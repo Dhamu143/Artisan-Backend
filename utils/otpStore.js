@@ -1,42 +1,39 @@
-// utils/otpStore.js
-
-// --- MOCK DATABASE/CACHE STORAGE (In-Memory Map) ---
+// In-memory OTP cache
 const otpCache = new Map();
-const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+const OTP_EXPIRY_MS = 60000; // 60 seconds
 
-/**
- * Saves the OTP and its expiry time to the cache/database.
- */
-const saveOTP = (mobileNumber, otp) => {
-    const expiryTime = Date.now() + OTP_EXPIRY_MS;
-    otpCache.set(String(mobileNumber), { otp: String(otp), expiry: expiryTime }); 
-    console.log(`[Cache] Saved OTP ${otp} for ${mobileNumber}.`);
+// Save OTP
+const saveOTP = (userId, mobileNumber, otp) => {
+  const key = `${userId}_${mobileNumber}`;
+  const expiryTime = Date.now() + OTP_EXPIRY_MS;
+
+  otpCache.set(key, {
+    otp: String(otp),
+    expiry: expiryTime,
+  });
 };
 
-/**
- * Checks if the submitted OTP matches the stored OTP and is not expired.
- */
-const verifyStoredOTP = async (mobileNumber, submittedOtp) => {
-    const storedData = otpCache.get(String(mobileNumber)); 
+// Verify OTP
+const verifyStoredOTP = async (userId, mobileNumber, submittedOtp) => {
+  const key = `${userId}_${mobileNumber}`;
+  const stored = otpCache.get(key);
 
-    if (!storedData) {
-        return false;
-    }
+  if (!stored) return false;
 
-    if (Date.now() > storedData.expiry) {
-        otpCache.delete(String(mobileNumber));
-        return false; 
-    }
+  if (Date.now() > stored.expiry) {
+    otpCache.delete(key);
+    return false;
+  }
 
-    if (storedData.otp === String(submittedOtp)) { 
-        otpCache.delete(String(mobileNumber));
-        return true; 
-    }
+  if (stored.otp === String(submittedOtp)) {
+    otpCache.delete(key);
+    return true;
+  }
 
-    return false; 
+  return false;
 };
 
 module.exports = {
-    saveOTP,
-    verifyStoredOTP
+  saveOTP,
+  verifyStoredOTP,
 };

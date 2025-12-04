@@ -1,0 +1,30 @@
+const express = require("express");
+const router = express.Router();
+const controller = require("../controllers/professioncontroller");
+
+router.get("/categories", controller.getCategoriesList);
+
+router.get("/category/:categoryId", controller.getSubcategoriesByCategoryId);
+
+router.get("/active/:lang", controller.getProfessionsActive);
+
+router.get("/admin", controller.getProfessionsAdmin);
+
+router.post("/", controller.createProfession);
+
+router.get("/:id", controller.getProfessionById);
+
+router.put("/:id", controller.updateProfession);
+
+router.put("/:id/status", controller.updateProfessionStatus);
+
+router.put("/:id/translate/:lang", controller.updateProfessionTranslation);
+
+router.patch(
+  "/categories/:categoryId/subcategories/:subcategoryName/status",
+  controller.updateSubcategoryStatus
+);
+
+router.delete("/:id", controller.deleteProfession);
+
+module.exports = router;
