@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
-require("./userModel"); // <-- IMPORTANT FIX
+require("../models/userModel");
 
 const ratingSchema = new mongoose.Schema(
   {
     rated_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     rated_to: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
+    rated_by_info: { type: Object },
+    rated_to_info: { type: Object },
+
     rating: Number,
     review: String,
   },

@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     otp: Object,
 
+    // Tokens
+    token: { type: String }, // JWT token
     // basic personal details
     name: { type: String, trim: true },
     email: { type: String, trim: true, lowercase: true },
@@ -33,7 +35,8 @@ const userSchema = new mongoose.Schema(
 
     // artisan info
     teamSize: { type: String, trim: true },
-
+    artisanImage: { type: String, trim: true },
+    artisanBio: { type: String, trim: true },
     // user type
     findArtisan: { type: Boolean },
     categoryId: { type: String },

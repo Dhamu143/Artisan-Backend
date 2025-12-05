@@ -2,7 +2,7 @@
   "Categories": [
     {
       "id": "CAT001",
-      "Category_Name": "🛠️ Skilled Trades & Technical",
+      "Category_Name": "Skilled Trades & Technical",
       "image_url": "https://www.istockphoto.com/photos/skilled-trade",
       "Subcategories": [
         {
@@ -12,55 +12,55 @@
               "id": "T001",
               "display_name": "Plumber",
               "isActive": true,
-              "image_url": "https://pixabay.com/images/search/plumbing/"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934442228-Plumber-removebg-preview_GVlOfWwKY.png"
             },
             {
               "id": "T002",
               "display_name": "Electrician",
               "isActive": true,
-              "image_url": "https://www.freepik.com/free-photos-vectors/electrician"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934483736-Electrician-removebg-preview_yTBQRZwzj.png"
             },
             {
               "id": "T003",
               "display_name": "Carpenter",
               "isActive": true,
-              "image_url": "https://www.freepik.com/free-photos-vectors/carpenter"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934514006-Carpenter-removebg-preview_Bs8jKOvUKn.png"
             },
             {
               "id": "T005",
               "display_name": "Welder",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/welder"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934544029-Welder-removebg-preview_szlNKpdsK.png"
             },
             {
               "id": "T006",
               "display_name": "Mason",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/mason-worker"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934568456-Mason-removebg-preview_FIej0tfGi.png"
             },
             {
               "id": "T007",
               "display_name": "Painter",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/house-painter"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934605668-Painter-removebg-preview_sjDo_8CeI.png"
             },
             {
               "id": "T008",
               "display_name": "Fitter",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/fitter"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934638288-Fitter-removebg-preview_DW-d8Yspj.png"
             },
             {
               "id": "T009",
               "display_name": "Blacksmith",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/blacksmith"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934680863-Blacksmith-removebg-preview_CaSmkvKLR.png"
             },
             {
               "id": "T010",
               "display_name": "Tailor",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/tailor"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934714252-Tailor-removebg-preview_-19fKBDOz.png"
             }
           ]
         },
@@ -71,7 +71,7 @@
               "id": "T004",
               "display_name": "Mechanic (Auto/Two-wheeler)",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/mechanic"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934823651-Mechanic-removebg-preview_CHj-V4pFi.png"
             },
             {
               "id": "T011",
@@ -83,37 +83,31 @@
               "id": "T012",
               "display_name": "CNC Operator",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/cnc-operator"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934848290-CNC_Operator-removebg-preview_w5t-DqbXRY.png"
             },
             {
               "id": "T013",
               "display_name": "AC/Fridge Technician",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/ac-technician"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934986086-AC-Fridge_Technician-removebg-preview_-B9rLYG4s.png"
             },
             {
               "id": "T014",
               "display_name": "Elevator Technician",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/elevator-technician"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934945800-Elevator_Technician-removebg-preview_cdADPd-ct.png"
             },
             {
               "id": "T015",
               "display_name": "Machine Operator",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/machine-operator"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935028150-Machinist-removebg-preview_uXLSSTWop.png"
             },
             {
               "id": "T016",
               "display_name": "CNC Programmer",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/cnc-programmer"
-            },
-            {
-              "id": "T017",
-              "display_name": "Technician (General)",
-              "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/technician"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934848290-CNC_Operator-removebg-preview_w5t-DqbXRY.png"
             }
           ]
         }
@@ -121,7 +115,7 @@
     },
     {
       "id": "CAT002",
-      "Category_Name": "🧑‍🏫 Education",
+      "Category_Name": "Education",
       "image_url": "https://unsplash.com/s/photos/education",
       "Subcategories": [
         {
@@ -137,19 +131,19 @@
               "id": "E002",
               "display_name": "Professor/Lecturer",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/university-lecturer"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764934780694-Professor-Lecturer-removebg-preview_z1EZFZ7zw.png"
             },
             {
               "id": "E003",
               "display_name": "Tutor/Coaching Instructor",
               "isActive": true,
-              "image_url": "https://www.freepik.com/free-photos-vectors/coaching-teacher"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935126607-Education_Counselor-removebg-preview_hpxtvNrUg.png"
             },
             {
               "id": "E004",
               "display_name": "Special Educator",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/special-education-teacher"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764936072984-Special_Educator-removebg-preview_8V8kwfQZs9.png"
             },
             {
               "id": "E005",
@@ -161,25 +155,25 @@
               "id": "E006",
               "display_name": "School Principal/Headmaster",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/school-principal"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935172451-School_Principal-removebg-preview_w4zaWc2ad.png"
             },
             {
               "id": "E007",
               "display_name": "Education Counselor",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/education-counselor"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935126607-Education_Counselor-removebg-preview_hpxtvNrUg.png"
             },
             {
               "id": "E008",
               "display_name": "Librarian",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/librarian"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935096333-Librarian-removebg-preview_fM9MVPtgM.png"
             },
             {
               "id": "E009",
               "display_name": "Online Educator",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/online-teacher"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935253256-Online_Educator-removebg-preview_hOV82Zrnd.png"
             }
           ]
         }
@@ -187,7 +181,7 @@
     },
     {
       "id": "CAT003",
-      "Category_Name": "👨‍⚕️ Healthcare",
+      "Category_Name": "Healthcare",
       "image_url": "https://www.istockphoto.com/photos/healthcare",
       "Subcategories": [
         {
@@ -197,31 +191,31 @@
               "id": "H001",
               "display_name": "Doctor (General, Specialist, Surgeon, MBBS)",
               "isActive": true,
-              "image_url": "https://www.freepik.com/free-photos-vectors/doctor"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935344502-Doctor-removebg-preview_lfKyB7kqN.png"
             },
             {
               "id": "H002",
               "display_name": "Nurse",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/nurse"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935782398-Nurse-removebg-preview_bdTiDkuSi.png"
             },
             {
               "id": "H003",
               "display_name": "Pharmacist",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/pharmacist"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935812521-Pharmacist-removebg-preview_umTHdOUM7y.png"
             },
             {
               "id": "H004",
               "display_name": "Lab Technician",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/lab-technician"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935841050-Lab_Technician-removebg-preview_8kq5Dc1q5.png"
             },
             {
               "id": "H005",
               "display_name": "Physiotherapist",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/physiotherapist"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935868683-Psychologist-removebg-preview_2MZpcb43Z.png"
             },
             {
               "id": "H006",
@@ -233,37 +227,37 @@
               "id": "H007",
               "display_name": "Psychologist/Psychiatrist",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/psychiatrist"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935899648-Physiotherapist-removebg-preview_YjSiDnhkcI.png"
             },
             {
               "id": "H008",
               "display_name": "Dentist",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/dentist"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935299323-Dentist-removebg-preview_j6Mk71mYE.png"
             },
             {
               "id": "H009",
               "display_name": "Dietitian/Nutritionist",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/dietitian"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935378926-Dietitian-removebg-preview_1OIXj6vW2.png"
             },
             {
               "id": "H010",
               "display_name": "Paramedic",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/paramedic"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764936029811-Paramedic-removebg-preview_rlruQUdat.png"
             },
             {
               "id": "H011",
               "display_name": "Hospital Administrator",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/hospital-administrator"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935937301-Hospital_Administrator-removebg-preview_Hd9s9Okpho.png"
             },
             {
               "id": "H012",
               "display_name": "Medical Transcriptionist",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/medical-transcriptionist"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935976154-Medical_Transcriptionist-removebg-preview_HC8RqWtIj.png"
             },
             {
               "id": "H013",
@@ -283,8 +277,8 @@
     },
     {
       "id": "CAT004",
-      "Category_Name": "👨‍💻 Information Technology",
-      "image_url": "https://www.istockphoto.com/photos/information-technology",
+      "Category_Name": "Information Technology",
+      "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935204563-Information_Technology-removebg-preview_vio5sbZab.png",
       "Subcategories": [
         {
           "Subcategory_Name": "IT Professionals",
@@ -293,7 +287,7 @@
               "id": "IT001",
               "display_name": "Software Developer",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/software-developer"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935500295-Curriculum_Developer-removebg-preview_iZ8uJX6Ns.png"
             },
             {
               "id": "IT002",
@@ -379,8 +373,8 @@
     },
     {
       "id": "CAT005",
-      "Category_Name": "📊 Finance & Business",
-      "image_url": "https://www.istockphoto.com/photos/finance-business",
+      "Category_Name": "Finance & Business",
+      "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935563128-Finance___Business-removebg-preview_QKZxuLBbu.png",
       "Subcategories": [
         {
           "Subcategory_Name": "Finance Professionals",
@@ -469,7 +463,7 @@
     },
     {
       "id": "CAT006",
-      "Category_Name": "🧑‍⚖️ Legal & Government Services",
+      "Category_Name": "Legal & Government Services",
       "image_url": "https://www.istockphoto.com/photos/legal-law-enforcement",
       "Subcategories": [
         {
@@ -503,57 +497,10 @@
         }
       ]
     },
-    {
-      "id": "CAT007",
-      "Category_Name": "📦 Skilled & Semi-Skilled Services",
-      "image_url": "https://www.istockphoto.com/photos/skilled-services",
-      "Subcategories": [
-        {
-          "Subcategory_Name": "Service Workers",
-          "Professions": [
-            {
-              "id": "SS001",
-              "display_name": "Driver (Truck/Taxi/Delivery)",
-              "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/driver"
-            },
-            {
-              "id": "SS002",
-              "display_name": "Security Guard",
-              "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/security-guard"
-            },
-            {
-              "id": "SS003",
-              "display_name": "Housekeeper/Cleaner",
-              "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/housekeeper"
-            },
-            {
-              "id": "SS004",
-              "display_name": "Cook/Chef",
-              "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/cook"
-            },
-            {
-              "id": "SS005",
-              "display_name": "Waiter/Server",
-              "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/waiter"
-            },
-            {
-              "id": "SS006",
-              "display_name": "Barber/Hairdresser",
-              "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/barber"
-            }
-          ]
-        }
-      ]
-    },
+
     {
       "id": "CAT008",
-      "Category_Name": "🏢 Administrative & Government",
+      "Category_Name": "Administrative & Government",
       "image_url": "https://www.istockphoto.com/photos/administrative-government",
       "Subcategories": [
         {
@@ -589,7 +536,7 @@
     },
     {
       "id": "CAT009",
-      "Category_Name": "🎨 Creative & Media",
+      "Category_Name": "Creative & Media",
       "image_url": "https://www.istockphoto.com/photos/creative-media",
       "Subcategories": [
         {
@@ -637,7 +584,7 @@
     },
     {
       "id": "CAT010",
-      "Category_Name": "🌱 Agriculture & Allied",
+      "Category_Name": "Agriculture & Allied",
       "image_url": "https://www.istockphoto.com/photos/agriculture-allied",
       "Subcategories": [
         {
@@ -673,7 +620,7 @@
     },
     {
       "id": "CAT011",
-      "Category_Name": "🧪 Science & Research",
+      "Category_Name": "Science & Research",
       "image_url": "https://www.istockphoto.com/photos/science-research",
       "Subcategories": [
         {
@@ -689,7 +636,7 @@
               "id": "SR002",
               "display_name": "Lab Researcher",
               "isActive": true,
-              "image_url": "https://www.istockphoto.com/photos/lab-researcher"
+              "image_url": "https://ik.imagekit.io/o5blnwxna/users/avatars/1764935439445-Lab_Technician-removebg-preview_NlN18H0vDA.png"
             },
             {
               "id": "SR003",
@@ -715,7 +662,7 @@
     },
     {
       "id": "CAT012",
-      "Category_Name": "✈️ Travel & Transport",
+      "Category_Name": "Travel & Transport",
       "image_url": "https://www.istockphoto.com/photos/travel-transport",
       "Subcategories": [
         {
@@ -751,7 +698,7 @@
     },
     {
       "id": "CAT013",
-      "Category_Name": "🏬 Retail & Sales",
+      "Category_Name": "Retail & Sales",
       "image_url": "https://www.istockphoto.com/photos/retail-sales",
       "Subcategories": [
         {
@@ -787,7 +734,7 @@
     },
     {
       "id": "CAT014",
-      "Category_Name": "🏗️ Construction & Infrastructure",
+      "Category_Name": "Construction & Infrastructure",
       "image_url": "https://www.istockphoto.com/photos/construction-infrastructure",
       "Subcategories": [
         {
@@ -823,7 +770,7 @@
     },
     {
       "id": "CAT015",
-      "Category_Name": "🛡️ Defense & Security",
+      "Category_Name": "Defense & Security",
       "image_url": "https://www.istockphoto.com/photos/defense-security",
       "Subcategories": [
         {
@@ -859,7 +806,7 @@
     },
     {
       "id": "CAT016",
-      "Category_Name": "🧘 Spiritual & Community Services",
+      "Category_Name": "Spiritual & Community Services",
       "image_url": "https://www.istockphoto.com/photos/spiritual-community-services",
       "Subcategories": [
         {

@@ -502,6 +502,7 @@ exports.deleteProfession = (req, res) => {
     message: `Profession ${professionId} and all its translations deleted successfully.`,
   });
 };
+
 exports.getArtisans = async (req, res) => {
   try {
     const {
@@ -510,23 +511,37 @@ exports.getArtisans = async (req, res) => {
       latitude,
       longitude,
       distance = 30,
+      city, 
+      businessName, 
     } = req.query;
 
     if (!categoryId || !subCategoryId) {
       return res.status(400).json({
-        success: false,
+        issuccess: false,
         message: "categoryId and subCategoryId are required.",
       });
     }
 
+    // 1. Start with the mandatory filters
     let query = {
-      findArtisan: true,
+      findArtisan: false,
       categoryId,
       subCategoryId,
     };
 
+    if (city) {
+      query.city = { $regex: city, $options: "i" };
+    }
+
+    // 3. Add 'businessName' filter if provided
+    if (businessName) {
+      query.businessName = { $regex: businessName, $options: "i" };
+    }
+
+    // 4. Execute the initial MongoDB query with all necessary filters
     let artisans = await User.find(query);
 
+    // 5. Apply Haversine distance filter if latitude and longitude are provided
     if (latitude && longitude) {
       const lat = Number(latitude);
       const lon = Number(longitude);
@@ -535,13 +550,14 @@ exports.getArtisans = async (req, res) => {
       artisans = artisans.filter((item) => {
         if (!item.latitude || !item.longitude) return false;
 
+        // NOTE: The haversine function must be defined and available in this scope
         const dist = haversine(lat, lon, item.latitude, item.longitude);
         return dist <= maxDistanceKm;
       });
     }
 
     res.json({
-      success: true,
+      issuccess: true,
       total: artisans.length,
       artisans,
     });

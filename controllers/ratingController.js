@@ -43,13 +43,13 @@ const addRating = async (req, res) => {
     res.status(201).json({
       message: "Rating submitted successfully",
       rating: newRating,
+      issuccess: true,
     });
   } catch (error) {
     console.error("Error adding rating:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 const getRatingsForUser = async (req, res) => {
   try {
@@ -59,22 +59,66 @@ const getRatingsForUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid User ID" });
     }
 
+    // 1. Fetch all ratings for the user
     const ratings = await Rating.find({ rated_to: userId });
 
+    // 2. Calculate the average rating
+    let averageRating = 0;
+    const count = ratings.length;
+
+    if (count > 0) {
+      const sumOfRatings = ratings.reduce(
+        (acc, rating) => acc + rating.rating,
+        0
+      );
+      averageRating = (sumOfRatings / count).toFixed(2); // Calculate and round to 2 decimal places
+    }
+    const populatedRatings = await Rating.find({ rated_to: userId }).populate(
+      "rated_by"
+    );
+
     res.status(200).json({
-      success: true,
-      count: ratings.length,
-      ratings
+      issuccess: true,
+      count: count, // Total number of ratings
+      averageRating: parseFloat(averageRating), // Include the calculated average
+      ratings: populatedRatings, // The list of ratings
     });
   } catch (error) {
     console.error("Error fetching ratings:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+// ---------------- Delete Rating ----------------
+const deleteRating = async (req, res) => {
+  try {
+    const { ratingId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(ratingId)) {
+      return res.status(400).json({ error: "Invalid Rating ID" });
+    }
 
+    const deletedRating = await Rating.findByIdAndDelete(ratingId);
+
+    if (!deletedRating) {
+      return res.status(404).json({
+        error: "Rating not found",
+        issuccess: false,
+      });
+    }
+
+    res.status(200).json({
+      message: "Rating deleted successfully",
+      issuccess: true,
+      deletedRatingId: ratingId,
+    });
+  } catch (error) {
+    console.error("Error deleting rating:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   addRating,
   getRatingsForUser,
+  deleteRating,
 };
