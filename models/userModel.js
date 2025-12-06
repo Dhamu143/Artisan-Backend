@@ -1,5 +1,35 @@
 const mongoose = require("mongoose");
 
+const WorkingHoursSchema = new mongoose.Schema(
+  {
+    day: {
+      type: String,
+      required: true,
+      enum: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
+    },
+    time: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    enabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    _id: false, 
+  }
+);
+
 const userSchema = new mongoose.Schema(
   {
     mobile_number: {
@@ -11,42 +41,41 @@ const userSchema = new mongoose.Schema(
     },
 
     isVerified: { type: Boolean, default: false },
-    otp: Object,
+    otp: Object, 
 
-    // Tokens
-    token: { type: String }, // JWT token
-    // basic personal details
+    token: { type: String },
     name: { type: String, trim: true },
-    email: { type: String, trim: true, lowercase: true },
+    email: { type: String, trim: true, lowercase: true }, 
 
-    // business details
     businessEmail: { type: String, trim: true, lowercase: true },
-    businessName: { type: String, trim: true },
+    businessName: { type: String, trim: true }, 
 
-    // contact + location
     phone: { type: String, trim: true },
     address: { type: String, trim: true },
     city: { type: String, trim: true },
-    postalCode: { type: String, trim: true },
+    postalCode: { type: String, trim: true }, 
 
-    // country details
     selectedCallingCode: { type: String, trim: true },
-    selectedCountryName: { type: String, trim: true },
+    selectedCountryName: { type: String, trim: true }, 
 
-    // artisan info
     teamSize: { type: String, trim: true },
     artisanImage: { type: String, trim: true },
     artisanBio: { type: String, trim: true },
-    // user type
     findArtisan: { type: Boolean },
     categoryId: { type: String },
-    subcategoryId: { type: String },
+    subCategoryId: { type: String },
     latitude: { type: Number },
     longitude: { type: Number },
+    resumeUrl: { type: String, trim: true },
+
+    profileImage: { type: String, trim: true },
+
+    workingHours: [WorkingHoursSchema],
+    isAvailable: { type: Boolean, default: true },
   },
   {
     timestamps: true,
-    strict: false,
+    strict: true,
     minimize: false,
   }
 );

@@ -3,9 +3,8 @@ const router = express.Router();
 const { createUploader } = require("../middleware/fileUpload");
 const { uploadToImageKit } = require("../services/storageService");
 
-const uploadAvatar = createUploader("image", 2 * 1024 * 1024); // Max 2MB
-const uploadDocument = createUploader("doc", 15 * 1024 * 1024); // Max 15MB
-
+const uploadAvatar = createUploader("image", 2 * 1024 * 1024); 
+const uploadDocument = createUploader("doc", 15 * 1024 * 1024);
 router.post("/avatar", uploadAvatar.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -17,9 +16,9 @@ router.post("/avatar", uploadAvatar.single("file"), async (req, res) => {
       issuccess: true,
       message: "Avatar uploaded successfully",
       data: {
-        url: result.url,         
-        thumbnail: result.thumbnailUrl, 
-        fileId: result.fileId    
+        url: result.url,
+        thumbnail: result.thumbnailUrl,
+        fileId: result.fileId,
       },
     });
   } catch (error) {
@@ -27,7 +26,7 @@ router.post("/avatar", uploadAvatar.single("file"), async (req, res) => {
   }
 });
 
-router.post("/resume", uploadDocument.single("resume"), async (req, res) => {
+router.post("/", uploadDocument.single("upload"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
@@ -37,8 +36,9 @@ router.post("/resume", uploadDocument.single("resume"), async (req, res) => {
       issuccess: true,
       message: "Document uploaded",
       data: {
+        url: result.url,
         name: result.name,
-        fileId: result.fileId 
+        fileId: result.fileId,
       },
     });
   } catch (error) {

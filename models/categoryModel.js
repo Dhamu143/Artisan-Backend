@@ -1,9 +1,8 @@
-// models/categoryModel.js
 const mongoose = require("mongoose");
 
 const ProfessionSchema = new mongoose.Schema(
   {
-    id: { type: String, required: true }, // e.g. "T001"
+    id: { type: String, required: true }, 
     display_name: { type: String, required: true },
     image_url: { type: String },
     isActive: { type: Boolean, default: true },
@@ -13,7 +12,7 @@ const ProfessionSchema = new mongoose.Schema(
 
 const SubcategorySchema = new mongoose.Schema(
   {
-    id: { type: String, required: true }, // e.g. "SC001"
+    id: { type: String, required: true }, 
     Subcategory_Name: { type: String, required: true },
     Professions: [ProfessionSchema],
   },
@@ -22,11 +21,10 @@ const SubcategorySchema = new mongoose.Schema(
 
 const CategorySchema = new mongoose.Schema(
   {
-    id: { type: String, required: true }, // e.g. "CAT001"
+    id: { type: String, required: true },
     Category_Name: { type: String, required: true },
     image_url: { type: String },
     Subcategories: [SubcategorySchema],
-    // optional: professions directly under category (no subcategory)
     Professions: [ProfessionSchema],
   },
   { timestamps: true }

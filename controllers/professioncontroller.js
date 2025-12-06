@@ -124,7 +124,9 @@ exports.getCategoriesList = (req, res) => {
     image_url: category.image_url,
   }));
 
-  res.json({ Categories: categoriesList });
+  res.json({ Categories: categoriesList,
+    issuccess: true
+  });
 };
 
 exports.getSubcategoriesByCategoryId = (req, res) => {

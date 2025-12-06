@@ -114,7 +114,6 @@ const getMyProfile = async (req, res) => {
     return res.status(200).json({
       message: "User data retrieved successfully.",
       user,
-      token,
       issuccess: true,
     });
   } catch (error) {

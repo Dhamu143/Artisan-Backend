@@ -1,6 +1,5 @@
-// In-memory OTP cache
 const otpCache = new Map();
-const OTP_EXPIRY_MS = 60000; // 60 seconds
+const OTP_EXPIRY_MS = 60000; 
 
 // Save OTP
 const saveOTP = (userId, mobileNumber, otp) => {

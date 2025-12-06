@@ -10,13 +10,11 @@ const {
   createBulkJobs,
 } = require("../controllers/jobController");
 
-// Use router.route() to group methods for the same path (/)
 router
   .route("/")
   .get(getJobs) 
   .post(createJob); 
 
-// Use router.route() to group methods for the same path (/:id)
 router
   .route("/:id")
   .get(getJobById)
