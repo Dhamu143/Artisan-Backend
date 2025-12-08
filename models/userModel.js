@@ -26,7 +26,7 @@ const WorkingHoursSchema = new mongoose.Schema(
     },
   },
   {
-    _id: false, 
+    _id: false,
   }
 );
 
@@ -41,22 +41,22 @@ const userSchema = new mongoose.Schema(
     },
 
     isVerified: { type: Boolean, default: false },
-    otp: Object, 
+    otp: Object,
 
     token: { type: String },
     name: { type: String, trim: true },
-    email: { type: String, trim: true, lowercase: true }, 
+    email: { type: String, trim: true, lowercase: true },
 
     businessEmail: { type: String, trim: true, lowercase: true },
-    businessName: { type: String, trim: true }, 
+    businessName: { type: String, trim: true },
 
     phone: { type: String, trim: true },
     address: { type: String, trim: true },
     city: { type: String, trim: true },
-    postalCode: { type: String, trim: true }, 
+    postalCode: { type: String, trim: true },
 
     selectedCallingCode: { type: String, trim: true },
-    selectedCountryName: { type: String, trim: true }, 
+    selectedCountryName: { type: String, trim: true },
 
     teamSize: { type: String, trim: true },
     artisanImage: { type: String, trim: true },
@@ -72,6 +72,9 @@ const userSchema = new mongoose.Schema(
 
     workingHours: [WorkingHoursSchema],
     isAvailable: { type: Boolean, default: true },
+
+    averageRating: { type: Number, default: 0 },
+    totalRatings: { type: Number, default: 0 },
   },
   {
     timestamps: true,

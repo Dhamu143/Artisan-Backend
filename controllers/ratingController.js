@@ -62,7 +62,6 @@ const getRatingsForUser = async (req, res) => {
     // 1. Fetch all ratings for the user
     const ratings = await Rating.find({ rated_to: userId });
 
-    // 2. Calculate the average rating
     let averageRating = 0;
     const count = ratings.length;
 
@@ -71,23 +70,37 @@ const getRatingsForUser = async (req, res) => {
         (acc, rating) => acc + rating.rating,
         0
       );
-      averageRating = (sumOfRatings / count).toFixed(2); // Calculate and round to 2 decimal places
+
+      const rawAverage = sumOfRatings / count;
+
+      // ✅ YOUR RULE:
+      // 3.3  -> 3
+      // 3.5+ -> 4
+      averageRating = Math.round(rawAverage);
     }
+
+    // ✅ SAVE AVG + TOTAL IN USER SCHEMA (ONLY HERE)
+    await User.findByIdAndUpdate(userId, {
+      averageRating: averageRating,
+      totalRatings: count,
+    });
+
     const populatedRatings = await Rating.find({ rated_to: userId }).populate(
       "rated_by"
     );
 
     res.status(200).json({
       issuccess: true,
-      count: count, // Total number of ratings
-      averageRating: parseFloat(averageRating), // Include the calculated average
-      ratings: populatedRatings, // The list of ratings
+      count: count,
+      averageRating: averageRating,
+      ratings: populatedRatings,
     });
   } catch (error) {
     console.error("Error fetching ratings:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 // ---------------- Delete Rating ----------------
 const deleteRating = async (req, res) => {
   try {
@@ -106,10 +119,29 @@ const deleteRating = async (req, res) => {
       });
     }
 
+    const ratedTo = deletedRating.rated_to;
+
+    // ✅ Recalculate after delete
+    const remainingRatings = await Rating.find({ rated_to: ratedTo });
+
+    let avg = 0;
+    const total = remainingRatings.length;
+
+    if (total > 0) {
+      const sum = remainingRatings.reduce((acc, r) => acc + r.rating, 0);
+      avg = Math.round(sum / total);
+    }
+
+    await User.findByIdAndUpdate(ratedTo, {
+      averageRating: avg,
+      totalRatings: total,
+    });
+
     res.status(200).json({
       message: "Rating deleted successfully",
       issuccess: true,
       deletedRatingId: ratingId,
+      newAverageRating: avg,
     });
   } catch (error) {
     console.error("Error deleting rating:", error);

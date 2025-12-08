@@ -1,7 +1,8 @@
 const data = require("../data.json");
 const User = require("../models/userModel");
+
 const haversine = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // Earth radius in km
+  const R = 6371;
   const toRad = (x) => (x * Math.PI) / 180;
 
   const dLat = toRad(lat2 - lat1);
@@ -124,9 +125,7 @@ exports.getCategoriesList = (req, res) => {
     image_url: category.image_url,
   }));
 
-  res.json({ Categories: categoriesList,
-    issuccess: true
-  });
+  res.json({ Categories: categoriesList, issuccess: true });
 };
 
 exports.getSubcategoriesByCategoryId = (req, res) => {
@@ -294,7 +293,7 @@ exports.createProfession = (req, res) => {
     id: newId,
     display_name: englishName,
     isActive: true,
-    image_url: req.body.image_url || null, // Include image_url from the form
+    image_url: req.body.image_url || null,
   };
 
   let targetCategory = data.Categories.find(
@@ -304,7 +303,7 @@ exports.createProfession = (req, res) => {
   if (!targetCategory) {
     targetCategory = {
       Category_Name: categoryName,
-      id: generateId(), // You might need an ID for a new category too
+      id: generateId(),
       Professions: [],
     };
     data.Categories.push(targetCategory);
@@ -344,7 +343,6 @@ exports.createProfession = (req, res) => {
 // UPDATE (U): Update main profession details (display_name, image_url)
 exports.updateProfession = (req, res) => {
   const professionId = req.params.id;
-  // Expected fields from the ProfessionFormPage component
   const { display_name, image_url } = req.body;
 
   if (!display_name || !image_url) {
@@ -356,11 +354,9 @@ exports.updateProfession = (req, res) => {
   const result = findProfessionById(professionId);
 
   if (result && result.prof) {
-    // Update the primary data on the profession object
     result.prof.display_name = display_name;
     result.prof.image_url = image_url;
 
-    // Optionally update the English translation entry as well
     if (data.Translations.en) {
       data.Translations.en[professionId] = display_name;
     }
@@ -376,9 +372,8 @@ exports.updateProfession = (req, res) => {
   }
 };
 
-// UPDATE (U) - CENTRAL CONTROL: Update Active Status Globally
+// UPDATE- CENTRAL CONTROL: Update Active Status Globally
 exports.updateProfessionStatus = (req, res) => {
-  // ... (logic remains the same)
   const professionId = req.params.id;
   const { isActive } = req.body;
 
@@ -403,7 +398,6 @@ exports.updateProfessionStatus = (req, res) => {
 };
 
 exports.updateSubcategoryStatus = (req, res) => {
-  // ... (logic remains the same)
   const { categoryId, subcategoryName } = req.params;
   const { isActive } = req.body;
 
@@ -427,9 +421,8 @@ exports.updateSubcategoryStatus = (req, res) => {
   }
 };
 
-// UPDATE (U): Update a specific translation
+// UPDATE
 exports.updateProfessionTranslation = (req, res) => {
-  // ... (logic remains the same)
   const { id, lang } = req.params;
   const { translation } = req.body;
 
@@ -463,9 +456,8 @@ exports.updateProfessionTranslation = (req, res) => {
   });
 };
 
-// DELETE (D): Remove a profession entirely
+// DELETE
 exports.deleteProfession = (req, res) => {
-  // ... (logic remains the same)
   const professionId = req.params.id;
   let foundAndDeleted = false;
 
@@ -513,8 +505,9 @@ exports.getArtisans = async (req, res) => {
       latitude,
       longitude,
       distance = 30,
-      city, 
-      businessName, 
+      city,
+      businessName,
+      isAvailable,
     } = req.query;
 
     if (!categoryId || !subCategoryId) {
@@ -524,9 +517,14 @@ exports.getArtisans = async (req, res) => {
       });
     }
 
-    // 1. Start with the mandatory filters
     let query = {
       findArtisan: false,
+      isAvailable:
+        isAvailable === "true"
+          ? true
+          : isAvailable === "false"
+          ? false
+          : { $in: [true, false] },
       categoryId,
       subCategoryId,
     };
@@ -535,15 +533,12 @@ exports.getArtisans = async (req, res) => {
       query.city = { $regex: city, $options: "i" };
     }
 
-    // 3. Add 'businessName' filter if provided
     if (businessName) {
       query.businessName = { $regex: businessName, $options: "i" };
     }
 
-    // 4. Execute the initial MongoDB query with all necessary filters
     let artisans = await User.find(query);
 
-    // 5. Apply Haversine distance filter if latitude and longitude are provided
     if (latitude && longitude) {
       const lat = Number(latitude);
       const lon = Number(longitude);
@@ -551,8 +546,6 @@ exports.getArtisans = async (req, res) => {
 
       artisans = artisans.filter((item) => {
         if (!item.latitude || !item.longitude) return false;
-
-        // NOTE: The haversine function must be defined and available in this scope
         const dist = haversine(lat, lon, item.latitude, item.longitude);
         return dist <= maxDistanceKm;
       });
@@ -568,3 +561,44 @@ exports.getArtisans = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+// GET CATEGORY & SUBCATEGORY COUNT
+exports.getCategorySubcategoryCount = (req, res) => {
+  try {
+    let categoryCount = 0;
+    let subcategoryCount = 0;
+    let professionCount = 0;
+
+    data.Categories.forEach((category) => {
+      categoryCount++;
+
+      if (category.Subcategories && category.Subcategories.length > 0) {
+        subcategoryCount += category.Subcategories.length;
+
+        category.Subcategories.forEach((sub) => {
+          if (sub.Professions && sub.Professions.length > 0) {
+            professionCount += sub.Professions.length;
+          }
+        });
+      } else if (category.Professions) {
+        professionCount += category.Professions.length;
+      }
+    });
+
+    return res.status(200).json({
+      issuccess: true,
+      counts: {
+        categories: categoryCount,
+        subcategories: subcategoryCount,
+        professions: professionCount,
+      },
+    });
+  } catch (error) {
+    console.error("Count Error:", error);
+    return res.status(500).json({
+      issuccess: false,
+      error: "Internal Server Error",
+    });
+  }
+};
+

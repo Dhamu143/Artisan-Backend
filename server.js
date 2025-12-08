@@ -11,15 +11,15 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminAuthRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
-const jobRoutes = require("./routes/jobRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
 const professionRouter = require("./routes/professionrouter");
-
+const adminDashboardRoutes = require("./routes/adminDashboardRouters");
+const faqRoutes = require("./routes/faqRoutes");
 const app = express();
 
 app.use(
   cors({
-    origin: "*", 
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
@@ -42,9 +42,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/api/jobs", jobRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/professions", professionRouter);
+app.use("/api/admin-dashboard", adminDashboardRoutes);
+app.use("/api/faqs", faqRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend Running.");

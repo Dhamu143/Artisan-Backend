@@ -4,18 +4,17 @@ const authMiddleware = require("../middleware/authMiddleware");
 const {
   updateUserById,
   getUserById,
-  getMyProfile,
   deleteUserById,
   getAllUsers,
+  getUserCount,
 } = require("../controllers/userController");
 const router = express.Router();
 
 router.get("/all-users", getAllUsers);
 
+router.get("/count", getUserCount);
+
 router.put("/:userId", authMiddleware, updateUserById);
-
-
-router.get("/:userId", authMiddleware, getMyProfile);
 
 router.get("/:userId", authMiddleware, getUserById);
 
