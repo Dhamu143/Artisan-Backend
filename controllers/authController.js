@@ -9,7 +9,7 @@ const TOKEN_EXPIRE_TIME = "365d";
 const COOKIE_EXPIRE_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
 
 const generateOtp = async (req, res) => {
-  const { mobile_number } = req.body;
+  const { mobile_number, name } = req.body;
 
   if (!mobile_number) {
     return res.status(400).json({
@@ -17,13 +17,24 @@ const generateOtp = async (req, res) => {
       error: "Mobile number is required",
     });
   }
+  if (!name) {
+    return res.status(400).json({
+      issuccess: false,
+      error: "Name is required",
+    });
+  }
 
   const otp = generateSixDigitOTP();
 
   try {
-    await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { mobile_number },
-      { $set: { isVerified: false } },
+      {
+        $set: {
+          name: name, // FIXED
+          isVerified: false,
+        },
+      },
       { new: true, upsert: true }
     );
 
@@ -33,7 +44,8 @@ const generateOtp = async (req, res) => {
     return res.status(200).json({
       issuccess: true,
       message: "OTP generated and sent",
-      otp, // remove in production
+      name: name,
+      otp,
       expiresIn: 60,
     });
   } catch (error) {
@@ -46,8 +58,8 @@ const generateOtp = async (req, res) => {
 };
 
 const resendOtp = async (req, res) => {
-  const { mobile_number } = req.body;
-
+  const { mobile_number, name } = req.body;
+  console.log("dataofuser", req.body);
   if (!mobile_number) {
     return res.status(400).json({ error: "Mobile number is required" });
   }
@@ -57,7 +69,7 @@ const resendOtp = async (req, res) => {
   try {
     await User.findOneAndUpdate(
       { mobile_number },
-      { $set: { isVerified: false } },
+      { $set: { name: name, isVerified: false } },
       { new: true, upsert: true }
     );
 
@@ -67,6 +79,7 @@ const resendOtp = async (req, res) => {
     return res.status(200).json({
       issuccess: true,
       message: "OTP resent successfully",
+      name: name,
       otp, // remove in production
       expiresIn: 60,
     });
@@ -92,7 +105,9 @@ const verifyOtp = async (req, res) => {
     // Validate OTP
     const isOtpValid = await verifyStoredOTP(mobile_number, otp);
     if (!isOtpValid) {
-      return res.status(401).json({ error: "Invalid or expired OTP" });
+      return res.status(401).json({
+        error: "Your OTP has expired. Kindly generate a new OTP to proceed.",
+      });
     }
 
     // Find user
@@ -118,7 +133,7 @@ const verifyOtp = async (req, res) => {
     // Store token in HTTP-only cookie
     res.cookie("auth_token", token, {
       httpOnly: true,
-      secure: false, 
+      secure: false,
       sameSite: "strict",
       maxAge: COOKIE_EXPIRE_MS,
     });
@@ -130,8 +145,8 @@ const verifyOtp = async (req, res) => {
     return res.status(200).json({
       issuccess: true,
       verified: true,
-      message: "OTP verified successfully. User logged in.",
       user: userResponse,
+      message: "OTP verified successfully. User logged in.",
     });
   } catch (err) {
     console.error("OTP verification error:", err);

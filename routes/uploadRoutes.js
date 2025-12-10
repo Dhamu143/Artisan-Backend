@@ -3,7 +3,7 @@ const router = express.Router();
 const { createUploader } = require("../middleware/fileUpload");
 const { uploadToImageKit } = require("../services/storageService");
 
-const uploadAvatar = createUploader("image", 2 * 1024 * 1024); 
+const uploadAvatar = createUploader("image", 20 * 1024 * 1024); 
 const uploadDocument = createUploader("doc", 15 * 1024 * 1024);
 router.post("/avatar", uploadAvatar.single("file"), async (req, res) => {
   try {

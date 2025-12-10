@@ -1,9 +1,8 @@
 const otpCache = new Map();
-const OTP_EXPIRY_MS = 60000; 
+const OTP_EXPIRY_MS = 60000;
 
-// Save OTP
-const saveOTP = (userId, mobileNumber, otp) => {
-  const key = `${userId}_${mobileNumber}`;
+const saveOTP = (mobileNumber, otp) => {
+  const key = mobileNumber;
   const expiryTime = Date.now() + OTP_EXPIRY_MS;
 
   otpCache.set(key, {
@@ -12,20 +11,17 @@ const saveOTP = (userId, mobileNumber, otp) => {
   });
 };
 
-// Verify OTP
-const verifyStoredOTP = async (userId, mobileNumber, submittedOtp) => {
-  const key = `${userId}_${mobileNumber}`;
-  const stored = otpCache.get(key);
-
+const verifyStoredOTP = (mobileNumber, submittedOtp) => {
+  const stored = otpCache.get(mobileNumber);
   if (!stored) return false;
 
   if (Date.now() > stored.expiry) {
-    otpCache.delete(key);
+    otpCache.delete(mobileNumber);
     return false;
   }
 
   if (stored.otp === String(submittedOtp)) {
-    otpCache.delete(key);
+    otpCache.delete(mobileNumber);
     return true;
   }
 

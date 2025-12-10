@@ -11,7 +11,7 @@ const {
 // CRUD Routes
 router.post("/create", createFAQ);
 router.get("/", getAllFAQs);
-router.put("/update/:id", updateFAQ);
-router.delete("/delete/:id", deleteFAQ);
+router.put("/:id", updateFAQ);
+router.delete("/:id", deleteFAQ);
 
 module.exports = router;

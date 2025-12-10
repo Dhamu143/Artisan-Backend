@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 
-// restricted fields
+const categoriesData = require("../data.json");
+
 const restrictedFields = [
   "_id",
   "mobile_number",
@@ -11,7 +12,7 @@ const restrictedFields = [
   "otp",
 ];
 
-// deep merge function
+// Deep merge function
 const deepMerge = (target, source) => {
   for (const key in source) {
     if (restrictedFields.includes(key)) continue;
@@ -29,9 +30,53 @@ const deepMerge = (target, source) => {
   }
 };
 
-// ===========================
+const enrichUserWithCategoryData = (user) => {
+  const enrichedUser = user.toObject ? user.toObject() : { ...user };
+
+  if (enrichedUser.categoryId) {
+    const category = categoriesData.Categories.find(
+      (c) => c.id === enrichedUser.categoryId
+    );
+
+    if (category) {
+      enrichedUser.category = {
+        id: category.id,
+        Category_Name: category.Category_Name,
+        image_url: category.image_url,
+      };
+      delete enrichedUser.categoryId;
+
+      if (enrichedUser.subCategoryId) {
+        const subcategoryDetails = category.Subcategories.flatMap((sub) =>
+          sub.Professions
+            ? sub.Professions.map((p) => ({
+                ...p,
+                parentSubcategory: sub.Subcategory_Name,
+              }))
+            : sub
+        ).find((p) => p.id === enrichedUser.subCategoryId);
+
+        if (subcategoryDetails) {
+          enrichedUser.subcategory = subcategoryDetails;
+        } else {
+          const subcategoryGroup = category.Subcategories.find(
+            (sub) => sub.Subcategory_Name === enrichedUser.subCategoryId
+          );
+          if (subcategoryGroup) {
+            enrichedUser.subcategoryGroup = {
+              Subcategory_Name: subcategoryGroup.Subcategory_Name,
+            };
+          }
+        }
+        delete enrichedUser.subCategoryId;
+      }
+    }
+  }
+
+  return enrichedUser;
+};
+
 //   UPDATE USER BY ID
-// ===========================
 const updateUserById = async (req, res) => {
   const targetUserId = req.params.userId;
   const loggedInUserId = req.user?.userId;
@@ -46,7 +91,7 @@ const updateUserById = async (req, res) => {
       .json({ error: "Forbidden: You can only update your own profile." });
   }
   const updates = req.body;
-
+  console.log("updates", updates);
   try {
     const user = await User.findById(targetUserId);
 
@@ -58,9 +103,11 @@ const updateUserById = async (req, res) => {
 
     await user.save();
 
-    const updatedUser = user.toObject();
+    let updatedUser = user.toObject();
     delete updatedUser.otp;
     delete updatedUser.__v;
+
+    updatedUser = enrichUserWithCategoryData(updatedUser);
 
     return res.status(200).json({
       message: "User data updated successfully.",
@@ -97,9 +144,11 @@ const getUserById = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
+    const enrichedUser = enrichUserWithCategoryData(user);
+
     return res.status(200).json({
       message: "User data retrieved successfully.",
-      user,
+      user: enrichedUser,
       userId: loggedInUserId,
       issuccess: true,
     });
@@ -134,32 +183,55 @@ const deleteUserById = async (req, res) => {
     });
   }
 };
-
-module.exports = { deleteUserById };
-
-// ===========================
 // GET ALL USERS
-// ===========================
 const getAllUsers = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    console.log("--- START getAllUsers Request ---");
+    console.log("Raw req.query:", req.query);
+
+    const page =
+      Number(req.query["params[page]"]) || Number(req.query.page) || 1;
+    const limit =
+      Number(req.query["params[limit]"]) || Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const totalUsers = await User.countDocuments();
+    const gender = req.query["params[gender]"] || req.query.gender;
+    const categoryId = req.query["params[categoryId]"] || req.query.categoryId;
+    const subCategoryId =
+      req.query["params[subCategoryId]"] || req.query.subCategoryId;
 
-    const users = await User.find()
+    const findQuery = {};
+
+    if (gender) {
+      findQuery.gender = gender;
+    }
+    if (categoryId) {
+      findQuery.categoryId = categoryId;
+    }
+    if (subCategoryId) {
+      findQuery.subCategoryId = subCategoryId;
+    }
+    console.log("Extracted Filters: ", { gender, categoryId, subCategoryId });
+    console.log("MongoDB findQuery:", findQuery);
+    console.log("Pagination: ", { page, limit, skip });
+    console.log("-------------------------------------");
+
+    const totalUsers = await User.countDocuments(findQuery);
+
+    const users = await User.find(findQuery)
       .select("-otp -__v -password")
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    const totalPages = Math.ceil(totalUsers / limit);
+    const totalPages = Math.ceil(totalUsers / limit); 
+
+    const enrichedUsers = users.map((user) => enrichUserWithCategoryData(user));
 
     return res.status(200).json({
       message: "All user data retrieved successfully.",
       issuccess: true,
-      users,
+      users: enrichedUsers,
       totalUsers,
       totalPages,
       page,
@@ -171,9 +243,6 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
-
-module.exports = { getAllUsers };
-
 const getUserCount = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();

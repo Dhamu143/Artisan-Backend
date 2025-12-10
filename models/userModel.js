@@ -41,8 +41,9 @@ const userSchema = new mongoose.Schema(
     },
 
     isVerified: { type: Boolean, default: false },
+    isAuthenticat: { type: Boolean, default: false },
     otp: Object,
-
+    gender: { type: String },
     token: { type: String },
     name: { type: String, trim: true },
     email: { type: String, trim: true, lowercase: true },
@@ -59,7 +60,6 @@ const userSchema = new mongoose.Schema(
     selectedCountryName: { type: String, trim: true },
 
     teamSize: { type: String, trim: true },
-    artisanImage: { type: String, trim: true },
     artisanBio: { type: String, trim: true },
     findArtisan: { type: Boolean },
     categoryId: { type: String },
@@ -69,7 +69,9 @@ const userSchema = new mongoose.Schema(
     resumeUrl: { type: String, trim: true },
 
     profileImage: { type: String, trim: true },
-
+    workImages: [{ type: String, trim: true }],
+    experienceCertificate: [{ type: String, trim: true }],
+    qualificationCertificate: [{ type: String, trim: true }],
     workingHours: [WorkingHoursSchema],
     isAvailable: { type: Boolean, default: true },
 

@@ -1,17 +1,47 @@
 const imagekit = require("../config/imagekit");
 const path = require("path");
 
-const uploadToImageKit = async (file, folder = "general", isPrivate = false) => {
+// const uploadToImageKit = async (file, folder = "general", isPrivate = false) => {
+//   try {
+//     const cleanFileName = `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`;
+
+//     const response = await imagekit.upload({
+//       file: file.buffer,
+//       fileName: cleanFileName,
+//       folder: folder,
+//       isPrivateFile: isPrivate,
+//       useUniqueFileName: true,
+//          tags: [folder, file.mimetype.split("/")[1]],
+//     });
+
+//     return response;
+//   } catch (error) {
+//     console.error("ImageKit Upload Error:", error);
+//     throw new Error("File upload failed. Please try again.");
+//   }
+// };
+const uploadToImageKit = async (
+  file,
+  folder = "general",
+  isPrivate = false
+) => {
   try {
-    const cleanFileName = `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`;
+    const cleanFileName = `${Date.now()}-${file.originalname.replace(
+      /\s+/g,
+      "-"
+    )}`;
+
+    const base64File = `data:${file.mimetype};base64,${file.buffer.toString(
+      "base64"
+    )}`;
 
     const response = await imagekit.upload({
-      file: file.buffer,
+      file: base64File, // MUST include mime prefix
       fileName: cleanFileName,
-      folder: folder,
-      isPrivateFile: isPrivate,
+      folder,
+      isPrivateFile: false,
       useUniqueFileName: true,
-         tags: [folder, file.mimetype.split("/")[1]], 
+      tags: [folder, file.mimetype.split("/")[1]],
     });
 
     return response;

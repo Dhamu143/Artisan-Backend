@@ -59,41 +59,35 @@ function generateId() {
   return `P${count.toString().padStart(3, "0")}`;
 }
 
+// professions controller helpers
 function getFlattenedProfessions(searchTerm = "") {
-  const term = searchTerm.toLowerCase();
+  const term = searchTerm.toLowerCase();
 
-  const flattened = data.Categories.flatMap((category) => {
-    const categoryName = category.Category_Name;
+  const flattened = data.Categories.flatMap((category) => {
+    const categoryName = category.Category_Name;
+    const categoryId = category.id; // <-- 💡 Capture the ID here!
 
-    const allProfessions = category.Subcategories
-      ? category.Subcategories.flatMap((subcategory) =>
-          subcategory.Professions.map((prof) => ({
-            ...prof,
-            categoryName: categoryName,
-            subcategoryName: subcategory.Subcategory_Name,
-          }))
-        )
-      : (category.Professions || []).map((prof) => ({
-          ...prof,
-          categoryName: categoryName,
-          subcategoryName: "N/A",
-        }));
+    const allProfessions = category.Subcategories
+      ? category.Subcategories.flatMap((subcategory) =>
+          subcategory.Professions.map((prof) => ({
+            ...prof,
+            categoryId: categoryId, // <-- 💡 Add categoryId to the object
+            categoryName: categoryName,
+            subcategoryName: subcategory.Subcategory_Name,
+          }))
+        )
+      : (category.Professions || []).map((prof) => ({
+          ...prof,
+          categoryId: categoryId, // <-- 💡 Add categoryId to the object
+          categoryName: categoryName,
+          subcategoryName: "N/A",
+        }));
 
-    return allProfessions;
-  });
-
-  if (term) {
-    return flattened.filter(
-      (prof) =>
-        prof.display_name.toLowerCase().includes(term) ||
-        prof.id.toLowerCase().includes(term) ||
-        prof.categoryName.toLowerCase().includes(term) ||
-        (prof.subcategoryName &&
-          prof.subcategoryName.toLowerCase().includes(term))
-    );
-  }
-
-  return flattened;
+    return allProfessions;
+  });
+    // ... rest of the function (filtering and return)
+    // ...
+    return flattened;
 }
 
 exports.getCategoriesList = (req, res) => {
