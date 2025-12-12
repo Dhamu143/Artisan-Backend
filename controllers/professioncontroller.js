@@ -61,33 +61,33 @@ function generateId() {
 
 // professions controller helpers
 function getFlattenedProfessions(searchTerm = "") {
-  const term = searchTerm.toLowerCase();
+  const term = searchTerm.toLowerCase();
 
-  const flattened = data.Categories.flatMap((category) => {
-    const categoryName = category.Category_Name;
+  const flattened = data.Categories.flatMap((category) => {
+    const categoryName = category.Category_Name;
     const categoryId = category.id; // <-- 💡 Capture the ID here!
 
-    const allProfessions = category.Subcategories
-      ? category.Subcategories.flatMap((subcategory) =>
-          subcategory.Professions.map((prof) => ({
-            ...prof,
-            categoryId: categoryId, // <-- 💡 Add categoryId to the object
-            categoryName: categoryName,
-            subcategoryName: subcategory.Subcategory_Name,
-          }))
-        )
-      : (category.Professions || []).map((prof) => ({
-          ...prof,
-          categoryId: categoryId, // <-- 💡 Add categoryId to the object
-          categoryName: categoryName,
-          subcategoryName: "N/A",
-        }));
+    const allProfessions = category.Subcategories
+      ? category.Subcategories.flatMap((subcategory) =>
+          subcategory.Professions.map((prof) => ({
+            ...prof,
+            categoryId: categoryId, // <-- 💡 Add categoryId to the object
+            categoryName: categoryName,
+            subcategoryName: subcategory.Subcategory_Name,
+          }))
+        )
+      : (category.Professions || []).map((prof) => ({
+          ...prof,
+          categoryId: categoryId, // <-- 💡 Add categoryId to the object
+          categoryName: categoryName,
+          subcategoryName: "N/A",
+        }));
 
-    return allProfessions;
-  });
-    // ... rest of the function (filtering and return)
-    // ...
-    return flattened;
+    return allProfessions;
+  });
+  // ... rest of the function (filtering and return)
+  // ...
+  return flattened;
 }
 
 exports.getCategoriesList = (req, res) => {
@@ -504,13 +504,6 @@ exports.getArtisans = async (req, res) => {
       isAvailable,
     } = req.query;
 
-    if (!categoryId || !subCategoryId) {
-      return res.status(400).json({
-        issuccess: false,
-        message: "categoryId and subCategoryId are required.",
-      });
-    }
-
     let query = {
       findArtisan: false,
       isAvailable:
@@ -519,20 +512,34 @@ exports.getArtisans = async (req, res) => {
           : isAvailable === "false"
           ? false
           : { $in: [true, false] },
-      categoryId,
-      subCategoryId,
     };
 
+    // City filter
     if (city) {
       query.city = { $regex: city, $options: "i" };
     }
 
+    // Business name filter
     if (businessName) {
       query.businessName = { $regex: businessName, $options: "i" };
     }
 
+    // CATEGORY FILTER
+    if (categoryId) {
+      const categories = categoryId.split(",");
+      query.categoryId = { $in: categories };
+    }
+
+    // SUBCATEGORY FILTER
+    if (subCategoryId) {
+      const subCats = subCategoryId.split(",");
+      query.subCategoryId = { $in: subCats };
+    }
+
+    // Fetch users with DB query filters
     let artisans = await User.find(query);
 
+    // DISTANCE FILTER (after DB fetch)
     if (latitude && longitude) {
       const lat = Number(latitude);
       const lon = Number(longitude);
@@ -540,21 +547,23 @@ exports.getArtisans = async (req, res) => {
 
       artisans = artisans.filter((item) => {
         if (!item.latitude || !item.longitude) return false;
+
         const dist = haversine(lat, lon, item.latitude, item.longitude);
         return dist <= maxDistanceKm;
       });
     }
 
-    res.json({
+    return res.json({
       issuccess: true,
       total: artisans.length,
       artisans,
     });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 // GET CATEGORY & SUBCATEGORY COUNT
 exports.getCategorySubcategoryCount = (req, res) => {
@@ -595,4 +604,3 @@ exports.getCategorySubcategoryCount = (req, res) => {
     });
   }
 };
-
