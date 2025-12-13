@@ -73,7 +73,11 @@ const userSchema = new mongoose.Schema(
     experienceCertificate: [{ type: String, trim: true }],
     qualificationCertificate: [{ type: String, trim: true }],
     workingHours: [WorkingHoursSchema],
+    businessDescription: { type: String, trim: true },
     isAvailable: { type: Boolean, default: true },
+    panCard: { type: String, trim: true },
+    aadharCard: { type: String, trim: true },
+    switchArtisan: { type: Boolean, default: false },
 
     averageRating: { type: Number, default: 0 },
     totalRatings: { type: Number, default: 0 },

@@ -145,6 +145,7 @@ const verifyOtp = async (req, res) => {
     return res.status(200).json({
       issuccess: true,
       verified: true,
+      switchArtisan: false,
       user: userResponse,
       message: "OTP verified successfully. User logged in.",
     });

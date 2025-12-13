@@ -1,5 +1,6 @@
 const data = require("../data.json");
 const User = require("../models/userModel");
+const enrichUserWithCategoryData = require("../utils/enrichUserWithCategoryData");
 
 const haversine = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
@@ -491,81 +492,142 @@ exports.deleteProfession = (req, res) => {
   });
 };
 
+// exports.getArtisans = async (req, res) => {
+//   try {
+//     const {
+//       categoryId,
+//       subCategoryId,
+//       city,
+//       businessName,
+//       isAvailable,
+//       page = 1,
+//       limit = 10,
+//     } = req.query;
+
+//     const skip = (Number(page) - 1) * Number(limit);
+
+//     let query = {
+//       findArtisan: false,
+//     };
+
+//     // ---------- AVAILABILITY ----------
+//     if (isAvailable === "true") query.isAvailable = true;
+//     if (isAvailable === "false") query.isAvailable = false;
+
+//     // ---------- SEARCH ----------
+//     if (city) {
+//       query.city = { $regex: city, $options: "i" };
+//     }
+
+//     if (businessName) {
+//       query.businessName = { $regex: businessName, $options: "i" };
+//     }
+
+//     // ---------- CATEGORY FILTER ----------
+//     if (categoryId) {
+//       query.categoryId = { $in: categoryId.split(",") };
+//     }
+
+//     // ---------- SUBCATEGORY FILTER ----------
+//     if (subCategoryId) {
+//       query.subCategoryId = { $in: subCategoryId.split(",") };
+//     }
+//     if (city || businessName) {
+//       const search = city || businessName;
+
+//       query.$or = [
+//         { city: { $regex: search, $options: "i" } },
+//         { businessName: { $regex: search, $options: "i" } },
+//         { name: { $regex: search, $options: "i" } },
+//         { mobile_number: { $regex: search, $options: "i" } },
+//       ];
+//     }
+
+//     // ---------- COUNT ----------
+//     const total = await User.countDocuments(query);
+
+//     // ---------- FETCH ----------
+//     const users = await User.find(query)
+//       .skip(skip)
+//       .limit(Number(limit))
+//       .sort({ createdAt: -1 });
+
+//     // ✅ ENRICH CATEGORY & SUBCATEGORY
+//     const artisans = users.map((u) => enrichUserWithCategoryData(u));
+
+//     return res.status(200).json({
+//       issuccess: true,
+//       artisans,
+//       total,
+//       totalPages: Math.ceil(total / limit),
+//       page: Number(page),
+//     });
+//   } catch (error) {
+//     console.error("getArtisans error:", error);
+//     return res.status(500).json({ message: "Server Error" });
+//   }
+// };
+
+// GET CATEGORY & SUBCATEGORY COUNT
+
 exports.getArtisans = async (req, res) => {
   try {
     const {
       categoryId,
       subCategoryId,
-      latitude,
-      longitude,
-      distance = 30,
       city,
       businessName,
       isAvailable,
+      page = 1,
+      limit = 10,
     } = req.query;
 
-    let query = {
-      findArtisan: false,
-      isAvailable:
-        isAvailable === "true"
-          ? true
-          : isAvailable === "false"
-          ? false
-          : { $in: [true, false] },
-    };
+    const skip = (page - 1) * limit;
+    const query = { findArtisan: false };
 
-    // City filter
-    if (city) {
-      query.city = { $regex: city, $options: "i" };
-    }
+    if (isAvailable === "true") query.isAvailable = true;
+    if (isAvailable === "false") query.isAvailable = false;
 
-    // Business name filter
-    if (businessName) {
-      query.businessName = { $regex: businessName, $options: "i" };
-    }
-
-    // CATEGORY FILTER
     if (categoryId) {
-      const categories = categoryId.split(",");
-      query.categoryId = { $in: categories };
+      query.categoryId = { $in: categoryId.split(",") };
     }
 
-    // SUBCATEGORY FILTER
     if (subCategoryId) {
-      const subCats = subCategoryId.split(",");
-      query.subCategoryId = { $in: subCats };
+      query.subCategoryId = { $in: subCategoryId.split(",") };
     }
 
-    // Fetch users with DB query filters
-    let artisans = await User.find(query);
-
-    // DISTANCE FILTER (after DB fetch)
-    if (latitude && longitude) {
-      const lat = Number(latitude);
-      const lon = Number(longitude);
-      const maxDistanceKm = Number(distance);
-
-      artisans = artisans.filter((item) => {
-        if (!item.latitude || !item.longitude) return false;
-
-        const dist = haversine(lat, lon, item.latitude, item.longitude);
-        return dist <= maxDistanceKm;
-      });
+    const search = city || businessName;
+    if (search) {
+      query.$or = [
+        { city: { $regex: search, $options: "i" } },
+        { businessName: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
+        { mobile_number: { $regex: search, $options: "i" } },
+      ];
     }
 
-    return res.json({
+    const total = await User.countDocuments(query);
+
+    const users = await User.find(query)
+      .skip(skip)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+
+    const artisans = users.map(enrichUserWithCategoryData);
+
+    res.json({
       issuccess: true,
-      total: artisans.length,
       artisans,
+      total,
+      totalPages: Math.ceil(total / limit),
+      page: Number(page),
     });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-
-// GET CATEGORY & SUBCATEGORY COUNT
 exports.getCategorySubcategoryCount = (req, res) => {
   try {
     let categoryCount = 0;
