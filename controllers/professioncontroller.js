@@ -577,6 +577,7 @@ exports.getArtisans = async (req, res) => {
       subCategoryId,
       city,
       businessName,
+      isAuthenticat,
       isAvailable,
       page = 1,
       limit = 10,
@@ -584,9 +585,12 @@ exports.getArtisans = async (req, res) => {
 
     const skip = (page - 1) * limit;
     const query = { findArtisan: false };
-
-    if (isAvailable === "true") query.isAvailable = true;
-    if (isAvailable === "false") query.isAvailable = false;
+    if (isAuthenticat !== undefined) {
+      query.isAuthenticat = isAuthenticat === true || isAuthenticat === "true";
+    }
+    if (isAvailable !== undefined) {
+      query.isAvailable = isAvailable === true || isAvailable === "true";
+    }
 
     if (categoryId) {
       query.categoryId = { $in: categoryId.split(",") };

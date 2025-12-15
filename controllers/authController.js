@@ -31,7 +31,7 @@ const generateOtp = async (req, res) => {
       { mobile_number },
       {
         $set: {
-          name: name, // FIXED
+          name: name,
           isVerified: false,
         },
       },
@@ -80,7 +80,7 @@ const resendOtp = async (req, res) => {
       issuccess: true,
       message: "OTP resent successfully",
       name: name,
-      otp, // remove in production
+      otp,
       expiresIn: 60,
     });
   } catch (error) {
@@ -116,7 +116,6 @@ const verifyOtp = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Mark as verified
     user.isVerified = true;
 
     // Create JWT token
@@ -130,7 +129,6 @@ const verifyOtp = async (req, res) => {
 
     await user.save();
 
-    // Store token in HTTP-only cookie
     res.cookie("auth_token", token, {
       httpOnly: true,
       secure: false,

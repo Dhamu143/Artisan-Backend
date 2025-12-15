@@ -15,6 +15,8 @@ const ratingRoutes = require("./routes/ratingRoutes");
 const professionRouter = require("./routes/professionrouter");
 const adminDashboardRoutes = require("./routes/adminDashboardRouters");
 const faqRoutes = require("./routes/faqRoutes");
+const profileViewRouter = require("./routes/profileViewRouter");
+
 const app = express();
 
 app.use(
@@ -46,6 +48,7 @@ app.use("/api/ratings", ratingRoutes);
 app.use("/api/professions", professionRouter);
 app.use("/api/admin-dashboard", adminDashboardRoutes);
 app.use("/api/faqs", faqRoutes);
+app.use("/api", profileViewRouter);
 
 app.get("/", (req, res) => {
   res.send("Backend Running.");
