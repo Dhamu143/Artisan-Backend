@@ -60,7 +60,6 @@ function generateId() {
   return `P${count.toString().padStart(3, "0")}`;
 }
 
-// professions controller helpers
 function getFlattenedProfessions(searchTerm = "") {
   const term = searchTerm.toLowerCase();
 
@@ -335,7 +334,6 @@ exports.createProfession = (req, res) => {
   });
 };
 
-// UPDATE (U): Update main profession details (display_name, image_url)
 exports.updateProfession = (req, res) => {
   const professionId = req.params.id;
   const { display_name, image_url } = req.body;
@@ -367,7 +365,6 @@ exports.updateProfession = (req, res) => {
   }
 };
 
-// UPDATE- CENTRAL CONTROL: Update Active Status Globally
 exports.updateProfessionStatus = (req, res) => {
   const professionId = req.params.id;
   const { isActive } = req.body;
@@ -416,7 +413,6 @@ exports.updateSubcategoryStatus = (req, res) => {
   }
 };
 
-// UPDATE
 exports.updateProfessionTranslation = (req, res) => {
   const { id, lang } = req.params;
   const { translation } = req.body;
@@ -451,7 +447,6 @@ exports.updateProfessionTranslation = (req, res) => {
   });
 };
 
-// DELETE
 exports.deleteProfession = (req, res) => {
   const professionId = req.params.id;
   let foundAndDeleted = false;
@@ -629,6 +624,71 @@ exports.getArtisans = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+exports.getArtisanById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 🔒 Only artisans
+    const user = await User.findOne({
+      _id: id,
+      findArtisan: false,
+    }).select("-password -otp -__v");
+
+    if (!user) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "Artisan not found",
+      });
+    }
+
+    // ✅ Enrich with category & subcategory
+    const artisan = enrichUserWithCategoryData(user);
+
+    return res.status(200).json({
+      isSuccess: true,
+      artisan,
+    });
+  } catch (error) {
+    console.error("getArtisanById error:", error);
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Server Error",
+    });
+  }
+};
+// ✅ Toggle Authentication API
+exports.toggleArtisanAuthentication = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isAuthenticat } = req.body; // Expecting boolean
+
+    const artisan = await User.findByIdAndUpdate(
+      id,
+      { isAuthenticat: isAuthenticat },
+      { new: true } // Return the updated document
+    ).select("-password -otp -__v");
+
+    if (!artisan) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "Artisan not found",
+      });
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: `Artisan authentication set to ${isAuthenticat}`,
+      artisan,
+    });
+  } catch (error) {
+    console.error("toggleArtisanAuthentication error:", error);
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Server Error",
+    });
   }
 };
 

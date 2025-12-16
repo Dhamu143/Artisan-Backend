@@ -12,7 +12,6 @@ const restrictedFields = [
   "otp",
 ];
 
-// Deep merge function
 const deepMerge = (target, source) => {
   for (const key in source) {
     if (restrictedFields.includes(key)) continue;
@@ -37,13 +36,10 @@ const enrichUserWithCategoryData = (user) => {
 
   if (!categoryId) return enrichedUser;
 
-  const category = categoriesData.Categories.find(
-    (c) => c.id === categoryId
-  );
+  const category = categoriesData.Categories.find((c) => c.id === categoryId);
 
   if (!category) return enrichedUser;
 
-  // ---------- CATEGORY ----------
   enrichedUser.category = {
     id: category.id,
     Category_Name: category.Category_Name,
@@ -52,7 +48,6 @@ const enrichUserWithCategoryData = (user) => {
 
   delete enrichedUser.categoryId;
 
-  // ---------- SUBCATEGORY / PROFESSION ----------
   if (!subCategoryId || !category.Subcategories) return enrichedUser;
 
   let foundProfession = null;
@@ -81,7 +76,6 @@ const enrichUserWithCategoryData = (user) => {
 
   return enrichedUser;
 };
-
 
 //   UPDATE USER BY ID
 const updateUserById = async (req, res) => {
@@ -205,11 +199,19 @@ const getAllUsers = async (req, res) => {
     const subCategoryId =
       req.query["params[subCategoryId]"] || req.query.subCategoryId;
 
+    // ✅ NEW: isAuthenticat
+    const isAuthenticat =
+      req.query["params[isAuthenticat]"] || req.query.isAuthenticat;
+
     const findQuery = {};
 
     if (gender) findQuery.gender = gender;
     if (categoryId) findQuery.categoryId = categoryId;
     if (subCategoryId) findQuery.subCategoryId = subCategoryId;
+
+    // ✅ AUTHENTICATION FILTER
+    if (isAuthenticat === "true") findQuery.isAuthenticat = true;
+    if (isAuthenticat === "false") findQuery.isAuthenticat = false;
 
     const totalUsers = await User.countDocuments(findQuery);
 
@@ -219,9 +221,7 @@ const getAllUsers = async (req, res) => {
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    const enrichedUsers = users.map((u) =>
-      enrichUserWithCategoryData(u)
-    );
+    const enrichedUsers = users.map((u) => enrichUserWithCategoryData(u));
 
     return res.status(200).json({
       message: "All user data retrieved successfully.",

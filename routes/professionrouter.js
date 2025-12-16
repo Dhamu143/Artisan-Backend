@@ -23,11 +23,16 @@ router.put("/:id/status", controller.updateProfessionStatus);
 
 router.put("/:id/translate/:lang", controller.updateProfessionTranslation);
 
+router.get("/artisans/:id", controller.getArtisanById);
+
 router.patch(
   "/categories/:categoryId/subcategories/:subcategoryName/status",
   controller.updateSubcategoryStatus
 );
-
+router.put(
+  "/artisans/:id/authentication",
+  controller.toggleArtisanAuthentication
+);
 router.delete("/:id", controller.deleteProfession);
 
 module.exports = router;
