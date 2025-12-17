@@ -567,7 +567,7 @@ exports.deleteProfession = (req, res) => {
 
 exports.getArtisans = async (req, res) => {
   try {
-    const {
+    let {
       categoryId,
       subCategoryId,
       city,
@@ -580,9 +580,11 @@ exports.getArtisans = async (req, res) => {
 
     const skip = (page - 1) * limit;
     const query = { findArtisan: false };
+
     if (isAuthenticat !== undefined) {
       query.isAuthenticat = isAuthenticat === true || isAuthenticat === "true";
     }
+
     if (isAvailable !== undefined) {
       query.isAvailable = isAvailable === true || isAvailable === "true";
     }
@@ -595,8 +597,13 @@ exports.getArtisans = async (req, res) => {
       query.subCategoryId = { $in: subCategoryId.split(",") };
     }
 
-    const search = city || businessName;
-    if (search) {
+    // ✅ normalize to lowercase
+    const searchCity = city?.toLowerCase().trim();
+    const searchBusiness = businessName?.toLowerCase().trim();
+
+    if (searchCity || searchBusiness) {
+      const search = searchCity || searchBusiness;
+
       query.$or = [
         { city: { $regex: search, $options: "i" } },
         { businessName: { $regex: search, $options: "i" } },

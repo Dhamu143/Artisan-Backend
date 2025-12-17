@@ -124,18 +124,47 @@ const updateUserById = async (req, res) => {
 };
 
 //   GET USER BY ID
+// const getUserById = async (req, res) => {
+//   const targetUserId = req.params.userId;
+//   const loggedInUserId = req.user?.userId || null;
+
+//   if (!targetUserId) {
+//     return res.status(400).json({ error: "User ID is required in URL." });
+//   }
+//   if (targetUserId !== loggedInUserId) {
+//     return res.status(403).json({
+//       error: "Forbidden: You are only authorized to view your own profile.",
+//       issuccess: false,
+//     });
+//   }
+
+//   try {
+//     const user = await User.findById(targetUserId).select("-otp -__v");
+
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found." });
+//     }
+
+//     const enrichedUser = enrichUserWithCategoryData(user);
+
+//     return res.status(200).json({
+//       message: "User data retrieved successfully.",
+//       user: enrichedUser,
+//       userId: loggedInUserId,
+//       issuccess: true,
+//     });
+//   } catch (error) {
+//     console.error("Error retrieving user:", error);
+//     return res.status(500).json({
+//       error: "Internal server error while retrieving user data.",
+//     });
+//   }
+// };
 const getUserById = async (req, res) => {
   const targetUserId = req.params.userId;
-  const loggedInUserId = req.user?.userId || null;
 
   if (!targetUserId) {
     return res.status(400).json({ error: "User ID is required in URL." });
-  }
-  if (targetUserId !== loggedInUserId) {
-    return res.status(403).json({
-      error: "Forbidden: You are only authorized to view your own profile.",
-      issuccess: false,
-    });
   }
 
   try {
@@ -150,7 +179,6 @@ const getUserById = async (req, res) => {
     return res.status(200).json({
       message: "User data retrieved successfully.",
       user: enrichedUser,
-      userId: loggedInUserId,
       issuccess: true,
     });
   } catch (error) {

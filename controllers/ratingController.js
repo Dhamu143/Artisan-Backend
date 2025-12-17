@@ -6,7 +6,7 @@ const User = require("../models/userModel");
 const addRating = async (req, res) => {
   try {
     const { rated_by, rated_to, rating, review } = req.body;
-
+    console.log("rated_by", req.body);
     if (!rated_by || !rated_to || !rating) {
       return res.status(400).json({
         error: "rated_by, rated_to and rating are required",
@@ -28,13 +28,13 @@ const addRating = async (req, res) => {
     }
 
     // snapshot data
-    const ratedByInfo = { ...fromUser };
+    // const ratedByInfo = { ...fromUser };
     const ratedToInfo = { ...toUser };
 
     const newRating = await Rating.create({
       rated_by,
       rated_to,
-      rated_by_info: ratedByInfo,
+      // rated_by_info: ratedByInfo,
       rated_to_info: ratedToInfo,
       rating,
       review,
@@ -54,12 +54,11 @@ const addRating = async (req, res) => {
 const getRatingsForUser = async (req, res) => {
   try {
     const userId = req.params.userId;
-
+    console.log("data", req.params.userId);
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: "Invalid User ID" });
     }
 
-    // 1. Fetch all ratings for the user
     const ratings = await Rating.find({ rated_to: userId });
 
     let averageRating = 0;
@@ -72,14 +71,8 @@ const getRatingsForUser = async (req, res) => {
       );
 
       const rawAverage = sumOfRatings / count;
-
-      // ✅ YOUR RULE:
-      // 3.3  -> 3
-      // 3.5+ -> 4
-      averageRating = Math.round(rawAverage);
+      averageRating = rawAverage;
     }
-
-    // ✅ SAVE AVG + TOTAL IN USER SCHEMA (ONLY HERE)
     await User.findByIdAndUpdate(userId, {
       averageRating: averageRating,
       totalRatings: count,

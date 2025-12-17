@@ -6,23 +6,17 @@ const profileViewSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
     },
     viewerUserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
-    },
-    viewedAt: {
-      type: Date,
-      default: Date.now,
     },
   },
-  { timestamps: false }
+  { timestamps: true }
 );
 
-// ✅ ONE VIEW PER PERSON
+// One viewer → one profile → one record
 profileViewSchema.index(
   { profileUserId: 1, viewerUserId: 1 },
   { unique: true }

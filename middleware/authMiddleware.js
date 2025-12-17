@@ -1,26 +1,27 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
 
-const JWT_SECRET = process.env.JWT_SECRET || "SuperSecretKey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
-const authMiddleware = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const header = req.headers.authorization;
-
-  if (!header) {
-    return res.status(401).json({ error: "Token missing." });
-  }
+  if (!header) return res.status(401).json({ error: "Token missing" });
 
   const token = header.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ error: "Invalid token format." });
-  }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // attach user data
+
+    const user = await User.findById(decoded.userId).select("_id");
+    if (!user) return res.status(401).json({ error: "User not found" });
+
+    // 🔑 IMPORTANT: keep userId key
+    req.user = {
+      userId: user._id.toString(),
+    };
+
     next();
-  } catch (error) {
-    return res.status(401).json({ error: "Invalid or expired token." });
+  } catch {
+    return res.status(401).json({ error: "Invalid token" });
   }
 };
-
-module.exports = authMiddleware;
