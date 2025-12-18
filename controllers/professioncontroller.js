@@ -615,6 +615,7 @@ exports.getArtisans = async (req, res) => {
     const total = await User.countDocuments(query);
 
     const users = await User.find(query)
+      .select("-password -otp -__v")
       .skip(skip)
       .limit(Number(limit))
       .sort({ createdAt: -1 });
@@ -638,8 +639,7 @@ exports.getArtisanById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 🔒 Only artisans
-    const user = await User.findOne({
+    const user = await User.findById({
       _id: id,
       findArtisan: false,
     }).select("-password -otp -__v");
@@ -651,7 +651,6 @@ exports.getArtisanById = async (req, res) => {
       });
     }
 
-    // ✅ Enrich with category & subcategory
     const artisan = enrichUserWithCategoryData(user);
 
     return res.status(200).json({
@@ -675,7 +674,7 @@ exports.toggleArtisanAuthentication = async (req, res) => {
     const artisan = await User.findByIdAndUpdate(
       id,
       { isAuthenticat: isAuthenticat },
-      { new: true } // Return the updated document
+      { new: true } 
     ).select("-password -otp -__v");
 
     if (!artisan) {
@@ -692,6 +691,37 @@ exports.toggleArtisanAuthentication = async (req, res) => {
     });
   } catch (error) {
     console.error("toggleArtisanAuthentication error:", error);
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Server Error",
+    });
+  }
+};
+exports.toggleArtisanAvailability = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isAvailable } = req.body;
+
+    const artisan = await User.findByIdAndUpdate(
+      id,
+      { isAvailable },
+      { new: true }
+    ).select("-password -otp -__v");
+
+    if (!artisan) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "Artisan not found",
+      });
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: `Artisan availability set to ${isAvailable}`,
+      artisan,
+    });
+  } catch (error) {
+    console.error("toggleArtisanAvailability error:", error);
     return res.status(500).json({
       isSuccess: false,
       message: "Server Error",

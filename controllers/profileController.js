@@ -42,6 +42,7 @@ exports.getProfileViewCount = async (req, res) => {
   try {
     const { profileUserId } = req.params;
 
+    
     const count = await ProfileView.countDocuments({
       profileUserId: new mongoose.Types.ObjectId(profileUserId),
     });

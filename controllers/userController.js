@@ -227,7 +227,6 @@ const getAllUsers = async (req, res) => {
     const subCategoryId =
       req.query["params[subCategoryId]"] || req.query.subCategoryId;
 
-    // ✅ NEW: isAuthenticat
     const isAuthenticat =
       req.query["params[isAuthenticat]"] || req.query.isAuthenticat;
 
@@ -237,7 +236,6 @@ const getAllUsers = async (req, res) => {
     if (categoryId) findQuery.categoryId = categoryId;
     if (subCategoryId) findQuery.subCategoryId = subCategoryId;
 
-    // ✅ AUTHENTICATION FILTER
     if (isAuthenticat === "true") findQuery.isAuthenticat = true;
     if (isAuthenticat === "false") findQuery.isAuthenticat = false;
 

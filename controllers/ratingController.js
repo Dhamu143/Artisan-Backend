@@ -3,98 +3,236 @@ const Rating = require("../models/ratingModel");
 const User = require("../models/userModel");
 
 // ---------------- Add Rating ----------------
+// const addRating = async (req, res) => {
+//   try {
+//     const { rated_by, rated_to, rating, review } = req.body;
+//     console.log("rated_by", req.body);
+//     if (!rated_by || !rated_to || !rating) {
+//       return res.status(400).json({
+//         error: "rated_by, rated_to and rating are required",
+//       });
+//     }
+
+//     if (
+//       !mongoose.Types.ObjectId.isValid(rated_by) ||
+//       !mongoose.Types.ObjectId.isValid(rated_to)
+//     ) {
+//       return res.status(400).json({ error: "Invalid User ID format" });
+//     }
+
+//     const fromUser = await User.findById(rated_by).lean();
+//     const toUser = await User.findById(rated_to).lean();
+
+//     if (!fromUser || !toUser) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     // snapshot data
+//     // const ratedByInfo = { ...fromUser };
+//     const ratedToInfo = { ...toUser };
+
+//     const newRating = await Rating.create({
+//       rated_by,
+//       rated_to,
+//       // rated_by_info: ratedByInfo,
+//       rated_to_info: ratedToInfo,
+//       rating,
+//       review,
+//     });
+
+//     res.status(201).json({
+//       message: "Rating submitted successfully",
+//       rating: newRating,
+//       issuccess: true,
+//     });
+//   } catch (error) {
+//     console.error("Error adding rating:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 const addRating = async (req, res) => {
   try {
     const { rated_by, rated_to, rating, review } = req.body;
-    console.log("rated_by", req.body);
+
     if (!rated_by || !rated_to || !rating) {
-      return res.status(400).json({
-        error: "rated_by, rated_to and rating are required",
-      });
+      return res.status(400).json({ error: "Missing fields" });
     }
 
     if (
       !mongoose.Types.ObjectId.isValid(rated_by) ||
       !mongoose.Types.ObjectId.isValid(rated_to)
     ) {
-      return res.status(400).json({ error: "Invalid User ID format" });
+      return res.status(400).json({ error: "Invalid User ID" });
     }
 
-    const fromUser = await User.findById(rated_by).lean();
-    const toUser = await User.findById(rated_to).lean();
-
-    if (!fromUser || !toUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // snapshot data
-    // const ratedByInfo = { ...fromUser };
-    const ratedToInfo = { ...toUser };
-
-    const newRating = await Rating.create({
+    await Rating.create({
       rated_by,
       rated_to,
-      // rated_by_info: ratedByInfo,
-      rated_to_info: ratedToInfo,
       rating,
       review,
     });
 
-    res.status(201).json({
-      message: "Rating submitted successfully",
-      rating: newRating,
-      issuccess: true,
+    // ✅ Recalculate from source of truth
+    const stats = await Rating.aggregate([
+      { $match: { rated_to: new mongoose.Types.ObjectId(rated_to) } },
+      {
+        $group: {
+          _id: null,
+          totalRatings: { $sum: 1 },
+          ratingSum: { $sum: "$rating" },
+        },
+      },
+    ]);
+
+    const totalRatings = stats[0]?.totalRatings || 0;
+    const ratingSum = stats[0]?.ratingSum || 0;
+
+    // optional rounding to 1 decimal
+    const averageRating = totalRatings
+      ? Math.round((ratingSum / totalRatings) * 10) / 10
+      : 0;
+
+    await User.findByIdAndUpdate(rated_to, {
+      ratingSum,
+      totalRatings,
+      averageRating,
     });
-  } catch (error) {
-    console.error("Error adding rating:", error);
+
+    res.status(201).json({
+      issuccess: true,
+      averageRating,
+      totalRatings,
+    });
+  } catch (err) {
+    console.error("Add Rating Error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+
+// const getRatingsForUser = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     console.log("data", req.params.userId);
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.status(400).json({ error: "Invalid User ID" });
+//     }
+
+//     const ratings = await Rating.find({ rated_to: userId });
+
+//     let averageRating = 0;
+//     const count = ratings.length;
+
+//     if (count > 0) {
+//       const sumOfRatings = ratings.reduce(
+//         (acc, rating) => acc + rating.rating,
+//         0
+//       );
+
+//       const rawAverage = sumOfRatings / count;
+//       averageRating = rawAverage;
+//     }
+//     await User.findByIdAndUpdate(userId, {
+//       averageRating: averageRating,
+//       totalRatings: count,
+//     });
+
+//     const populatedRatings = await Rating.find({ rated_to: userId }).populate(
+//       "rated_by"
+//     );
+
+//     res.status(200).json({
+//       issuccess: true,
+//       count: count,
+//       averageRating: averageRating,
+//       ratings: populatedRatings,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching ratings:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
+// ---------------- Delete Rating ----------------
+
 const getRatingsForUser = async (req, res) => {
   try {
-    const userId = req.params.userId;
-    console.log("data", req.params.userId);
+    const { userId } = req.params;
+
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: "Invalid User ID" });
     }
 
-    const ratings = await Rating.find({ rated_to: userId });
+    const ratings = await Rating.find({ rated_to: userId })
+      .populate("rated_by", "name profileImage")
+      .select("rated_by rating review createdAt")
+      .lean();
 
-    let averageRating = 0;
     const count = ratings.length;
-
-    if (count > 0) {
-      const sumOfRatings = ratings.reduce(
-        (acc, rating) => acc + rating.rating,
-        0
-      );
-
-      const rawAverage = sumOfRatings / count;
-      averageRating = rawAverage;
-    }
-    await User.findByIdAndUpdate(userId, {
-      averageRating: averageRating,
-      totalRatings: count,
-    });
-
-    const populatedRatings = await Rating.find({ rated_to: userId }).populate(
-      "rated_by"
-    );
+    const sum = ratings.reduce((acc, r) => acc + r.rating, 0);
+    const averageRating = count ? sum / count : 0;
 
     res.status(200).json({
       issuccess: true,
-      count: count,
-      averageRating: averageRating,
-      ratings: populatedRatings,
+      rated_to: userId,
+      count,
+      averageRating,
+      ratings,
     });
-  } catch (error) {
-    console.error("Error fetching ratings:", error);
+  } catch (err) {
+    console.error("Get Ratings Error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-// ---------------- Delete Rating ----------------
+
+// const deleteRating = async (req, res) => {
+//   try {
+//     const { ratingId } = req.params;
+
+//     if (!mongoose.Types.ObjectId.isValid(ratingId)) {
+//       return res.status(400).json({ error: "Invalid Rating ID" });
+//     }
+
+//     const deletedRating = await Rating.findByIdAndDelete(ratingId);
+
+//     if (!deletedRating) {
+//       return res.status(404).json({
+//         error: "Rating not found",
+//         issuccess: false,
+//       });
+//     }
+
+//     const ratedTo = deletedRating.rated_to;
+
+//     // ✅ Recalculate after delete
+//     const remainingRatings = await Rating.find({ rated_to: ratedTo });
+
+//     let avg = 0;
+//     const total = remainingRatings.length;
+
+//     if (total > 0) {
+//       const sum = remainingRatings.reduce((acc, r) => acc + r.rating, 0);
+//       avg = Math.round(sum / total);
+//     }
+
+//     await User.findByIdAndUpdate(ratedTo, {
+//       averageRating: avg,
+//       totalRatings: total,
+//     });
+
+//     res.status(200).json({
+//       message: "Rating deleted successfully",
+//       issuccess: true,
+//       deletedRatingId: ratingId,
+//       newAverageRating: avg,
+//     });
+//   } catch (error) {
+//     console.error("Error deleting rating:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 const deleteRating = async (req, res) => {
   try {
     const { ratingId } = req.params;
@@ -103,44 +241,43 @@ const deleteRating = async (req, res) => {
       return res.status(400).json({ error: "Invalid Rating ID" });
     }
 
-    const deletedRating = await Rating.findByIdAndDelete(ratingId);
-
-    if (!deletedRating) {
-      return res.status(404).json({
-        error: "Rating not found",
-        issuccess: false,
-      });
+    const rating = await Rating.findByIdAndDelete(ratingId);
+    if (!rating) {
+      return res.status(404).json({ error: "Rating not found" });
     }
 
-    const ratedTo = deletedRating.rated_to;
+    // ✅ Recalculate again
+    const stats = await Rating.aggregate([
+      { $match: { rated_to: rating.rated_to } },
+      {
+        $group: {
+          _id: null,
+          totalRatings: { $sum: 1 },
+          ratingSum: { $sum: "$rating" },
+        },
+      },
+    ]);
 
-    // ✅ Recalculate after delete
-    const remainingRatings = await Rating.find({ rated_to: ratedTo });
+    const totalRatings = stats[0]?.totalRatings || 0;
+    const ratingSum = stats[0]?.ratingSum || 0;
+    const averageRating = totalRatings ? ratingSum / totalRatings : 0;
 
-    let avg = 0;
-    const total = remainingRatings.length;
-
-    if (total > 0) {
-      const sum = remainingRatings.reduce((acc, r) => acc + r.rating, 0);
-      avg = Math.round(sum / total);
-    }
-
-    await User.findByIdAndUpdate(ratedTo, {
-      averageRating: avg,
-      totalRatings: total,
+    await User.findByIdAndUpdate(rating.rated_to, {
+      ratingSum,
+      totalRatings,
+      averageRating,
     });
 
     res.status(200).json({
-      message: "Rating deleted successfully",
       issuccess: true,
-      deletedRatingId: ratingId,
-      newAverageRating: avg,
+      message: "Rating deleted",
     });
-  } catch (error) {
-    console.error("Error deleting rating:", error);
+  } catch (err) {
+    console.error("Delete Rating Error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 module.exports = {
   addRating,

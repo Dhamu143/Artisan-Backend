@@ -33,6 +33,8 @@ router.put(
   "/artisans/:id/authentication",
   controller.toggleArtisanAuthentication
 );
+router.put("/artisans/:id/isAvailable", controller.toggleArtisanAvailability);
+
 router.delete("/:id", controller.deleteProfession);
 
 module.exports = router;
